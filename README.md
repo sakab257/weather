@@ -23,25 +23,25 @@ A modern, elegant iOS weather application built with SwiftUI that provides real-
 This application follows the **MVVM (Model-View-ViewModel)** architectural pattern with clear separation of concerns:
 
 ```
-┌─────────────────────────────────────────────┐
+┌──────────────────────────────────────────────┐
 │          Presentation Layer                  │
 │  (SwiftUI Views & Components)                │
-└──────────────┬──────────────────────────────┘
+└──────────────┬───────────────────────────────┘
                │
-┌──────────────▼──────────────────────────────┐
+┌──────────────▼───────────────────────────────┐
 │          ViewModel Layer                     │
 │  (@Observable State Management)              │
-└──────────────┬──────────────────────────────┘
+└──────────────┬───────────────────────────────┘
                │
-┌──────────────▼──────────────────────────────┐
+┌──────────────▼───────────────────────────────┐
 │      Repository Layer                        │
 │  (Business Logic & Data Access)              │
-└──────────────┬──────────────────────────────┘
+└──────────────┬───────────────────────────────┘
                │
-┌──────────────▼──────────────────────────────┐
+┌──────────────▼───────────────────────────────┐
 │  Networking + Persistence                    │
 │  (Open-Meteo API + SwiftData)                │
-└─────────────────────────────────────────────┘
+└──────────────────────────────────────────────┘
 ```
 
 ### Design Patterns
@@ -73,9 +73,6 @@ cd Weather
 ```
 
 2. Open the project in Xcode:
-```bash
-open Weather.xcodeproj
-```
 
 3. Select your target device (Simulator or physical device)
 
@@ -176,12 +173,11 @@ Potential improvements for future versions:
 - [ ] Dark mode manual toggle
 - [ ] Widget support for Home Screen
 - [ ] Weather maps integration
-- [ ] Unit tests and UI tests
 - [ ] Accessibility improvements (VoiceOver support)
 
-## License
+## Goal
 
-This project is available for educational purposes.
+This project was built for educational purpose.
 
 ## Acknowledgments
 
@@ -191,4 +187,4 @@ This project is available for educational purposes.
 
 ---
 
-**Built with SwiftUI**
+**Built with SwiftUI** by Salim BOUSKINE
