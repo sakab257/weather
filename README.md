@@ -2,6 +2,10 @@
 
 A modern, elegant iOS weather application built with SwiftUI that provides real-time weather forecasts with a beautiful, weather-adaptive interface.
 
+## 🎥 Demo
+
+[Watch the demo video](https://www.youtube.com/shorts/1vwFhCtefqg)
+
 ## Features
 
 ### Core Functionality
