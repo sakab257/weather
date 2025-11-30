@@ -74,27 +74,41 @@ class CityWeatherViewModel {
     var weather: CityWeather?
     var isLoading: Bool = false
     var errorMessage: String?
-    
+
     private let repo: WeatherRepositoryProtocol
-    
-    init(city: City, repo: WeatherRepositoryProtocol = WeatherRepository()) {
+    private var historyRepo: SearchHistoryRepository?
+
+    init(city: City, repo: WeatherRepositoryProtocol = WeatherRepository(), historyRepo: SearchHistoryRepository? = nil) {
         self.city = city
         self.repo = repo
+        self.historyRepo = historyRepo
     }
-    
+
+    func setHistoryRepo(_ repo: SearchHistoryRepository) {
+        self.historyRepo = repo
+    }
+
     func loadWeather() async {
         guard !isLoading else { return }
         isLoading = true
         errorMessage = nil
-        
+
         do {
             // Artificial delay for smoother UX (optional)
             try await Task.sleep(for: .milliseconds(200))
             weather = try await repo.getWeather(for: city)
+
+            // Save city with weather data to history AFTER loading weather
+            if let weather = weather {
+                var updatedCity = city
+                updatedCity.lastKnownTemp = weather.current.temperature
+                updatedCity.lastKnownWeatherCode = weather.current.weatherCode
+                historyRepo?.save(city: updatedCity)
+            }
         } catch {
             errorMessage = error.localizedDescription
         }
-        
+
         isLoading = false
     }
 }

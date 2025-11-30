@@ -7,15 +7,15 @@ struct WeatherHomeView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel = WeatherSearchViewModel()
     @State private var navigationPath = NavigationPath()
-    
+
     var body: some View {
         NavigationStack(path: $navigationPath) {
             ZStack {
                 LinearGradient(colors: [Color(hex: "1c1c1e"), Color(hex: "2c3e50")], startPoint: .topLeading, endPoint: .bottomTrailing).ignoresSafeArea()
                 VStack(spacing: 24) {
-                    
+
                     FancySearchBar(text: $viewModel.query, isLoading: viewModel.isLoading).padding(.horizontal)
-                    
+
                     if viewModel.query.isEmpty {
                         ScrollView {
                             VStack(alignment: .leading, spacing: 20) {
@@ -41,11 +41,19 @@ struct WeatherHomeView: View {
                 }
             }
             .navigationDestination(for: City.self) { city in CityWeatherView(city: city) }
-            .onAppear { viewModel.setHistoryRepo(SearchHistoryRepository(modelContext: modelContext)) }
+            .onAppear {
+                viewModel.setHistoryRepo(SearchHistoryRepository(modelContext: modelContext))
+            }
+            .onChange(of: navigationPath) {
+                // Reload history when coming back from detail view
+                if navigationPath.isEmpty {
+                    viewModel.loadHistory()
+                }
+            }
         }.tint(.white)
     }
     private func onCitySelected(_ city: City) {
-        viewModel.selectCity(city)
+        // Just navigate - the CityWeatherView will save the city with weather data
         navigationPath.append(city)
     }
 }
@@ -54,16 +62,17 @@ struct WeatherHomeView: View {
 struct CityWeatherView: View {
     @State private var viewModel: CityWeatherViewModel
     @Environment(\.dismiss) var dismiss
-    
+    @Environment(\.modelContext) private var modelContext
+
     init(city: City) { _viewModel = State(initialValue: CityWeatherViewModel(city: city)) }
-    
+
     var body: some View {
         ZStack {
             if let weather = viewModel.weather {
                 let theme = WeatherTheme.get(for: weather.current.weatherCode, isDay: weather.current.isDay)
                 theme.gradient.ignoresSafeArea().animation(.easeInOut(duration: 0.8), value: weather.current.weatherCode)
             } else { Color(hex: "1a2a3a").ignoresSafeArea() }
-            
+
             if viewModel.isLoading { ProgressView().controlSize(.large).tint(.white) }
             else if let error = viewModel.errorMessage {
                 ErrorView(message: error) { Task { await viewModel.loadWeather() } }
@@ -79,6 +88,9 @@ struct CityWeatherView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            viewModel.setHistoryRepo(SearchHistoryRepository(modelContext: modelContext))
+        }
         .task { await viewModel.loadWeather() }
     }
 }
